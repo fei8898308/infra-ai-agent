@@ -1,0 +1,35 @@
+{
+  "version": "4",
+  "groupKey": "{}:{alertname=\"InterfaceDown\"}",
+  "truncatedAlerts": 0,
+  "receiver": "infra-ai-agent",
+  "status": "firing",
+  "groupLabels": {"alertname": "InterfaceDown"},
+  "commonLabels": {"alertname": "InterfaceDown", "severity": "warning"},
+  "commonAnnotations": {"summary": "Lab uplink is down"},
+  "routeLabels": {},
+  "notification_reason": "new_alerts",
+  "externalURL": "http://alertmanager:9093",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "InterfaceDown",
+        "instance": "192.0.2.10",
+        "device": "lab-switch-01",
+        "interface": "Ethernet1/1",
+        "job": "snmp",
+        "severity": "warning",
+        "site": "lab"
+      },
+      "annotations": {
+        "summary": "Lab uplink Ethernet1/1 is down",
+        "description": "Interface operational status has been down for five minutes. This is synthetic test data."
+      },
+      "startsAt": "2026-11-02T12:00:00Z",
+      "endsAt": "2026-11-02T12:10:00Z",
+      "generatorURL": "http://prometheus:9090/graph?g0.expr=ifOperStatus",
+      "fingerprint": "a1b2c3d4e5f67890"
+    }
+  ]
+}

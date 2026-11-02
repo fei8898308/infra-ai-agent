@@ -1,0 +1,29 @@
+name: Webhook checks
+on:
+  pull_request:
+  push:
+    branches: [main, feature/alertmanager-webhook]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            api/requirements.txt
+            requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+      - run: pip-audit -r api/requirements.txt --disable-pip --no-deps
+      - run: python scripts/init_env.py && docker compose config --quiet
+      - run: docker build -f api/Dockerfile -t infra-ai-agent:alertmanager-webhook .
+      - run: python scripts/smoke_docker.py

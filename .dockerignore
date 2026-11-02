@@ -1,0 +1,12 @@
+# Allowlist: credentials, Git history, tests, and local caches never enter context.
+**
+!api/
+!api/**
+!integrations/
+!integrations/**
+**/__pycache__
+**/*.pyc
+**/.env*
+**/secrets
+**/*.key
+**/*.pem
