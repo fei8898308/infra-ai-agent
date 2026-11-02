@@ -1,0 +1,40 @@
+name: infra-ai-agent
+
+services:
+  webhook:
+    image: infra-ai-agent:alertmanager-webhook
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    env_file: .env
+    ports:
+      - "127.0.0.1:${WEBHOOK_PORT:-8088}:8000"
+    networks:
+      agent-lab:
+        aliases:
+          - infra-ai-webhook
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 1.0
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+networks:
+  agent-lab:
+    external: true
+    name: ${AGENT_LAB_NETWORK:-agent-lab_agent-net}

@@ -1,0 +1,29 @@
+# Merge this receiver/route into your configuration; preserve existing paging.
+# This standalone example routes only synthetic alerts to the AI receiver.
+global:
+  resolve_timeout: 5m
+route:
+  receiver: default
+  group_by: [alertname, instance, interface]
+  group_wait: 10s
+  group_interval: 2m
+  repeat_interval: 4h
+  routes:
+    - receiver: infra-ai-agent
+      matchers:
+        - 'ai_analysis="true"'
+      continue: true
+receivers:
+  - name: default
+  - name: infra-ai-agent
+    webhook_configs:
+      - url: http://infra-ai-webhook:8000/webhooks/alertmanager
+        send_resolved: true
+        # Keep zero (no truncation); receiver rejects >20 alerts. Use small groups.
+        max_alerts: 0
+        timeout: 60s
+        http_config:
+          follow_redirects: false
+          authorization:
+            type: Bearer
+            credentials_file: /run/secrets/infra_ai_webhook_token

@@ -12,3 +12,9 @@ data/
 secrets/
 *.pem
 *.key
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+*.patch
+*.tar
